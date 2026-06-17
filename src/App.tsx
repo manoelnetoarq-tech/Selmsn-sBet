@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
   INITIAL_MATCHES, 
-  INITIAL_PREDICTIONS, 
-  INITIAL_USER_PROFILE, 
-  MOCK_RANKING 
+  INITIAL_USER_PROFILE 
 } from './data/initialData';
 import { Match, Prediction, UserProfile, Screen, MatchStatus } from './types';
 import Header from './components/Header';
@@ -141,38 +139,43 @@ export default function App() {
 
   // 3. Dynamic Ranking Computations
   const getComputedLeaderboard = () => {
-    // Start with base family points from MOCK_RANKING
-    const baseRanks = MOCK_RANKING.map(r => ({
-      id: r.id,
-      name: r.name,
-      email: r.email,
-      points: r.points,
-      predictionsCount: r.predictionsCount
-    }));
+    // Agrupa todos os usuários que têm palpites
+    const ranksMap: Record<string, { id: string; name: string; email: string; points: number; predictionsCount: number }> = {};
 
-    // Recalculate dynamic points for each ranking user based on final matches
-    return baseRanks.map(rank => {
-      // Find predictions of this user
-      const userPreds = predictions.filter(p => p.userEmail.toLowerCase() === rank.email.toLowerCase());
-      
-      let extraPoints = 0;
-      userPreds.forEach(pred => {
-        const correspondingMatch = matches.find(m => m.id === pred.matchId);
-        if (correspondingMatch && correspondingMatch.status === 'Finalizado') {
-          extraPoints += calculatePoints(pred, correspondingMatch);
-        }
-      });
-
-      // Total count
-      const totalCount = rank. predictionsCount + userPreds.filter(up => !INITIAL_PREDICTIONS.some(ip => ip.id === up.id)).length;
-
-      // Update ranking points
-      return {
-        ...rank,
-        points: rank.email === currentUser.email ? 185 + extraPoints : rank.points + extraPoints,
-        predictionsCount: totalCount
+    // Inclui o usuário atual com 0 pontos caso ele não tenha palpites ainda
+    if (currentUser.email && !ranksMap[currentUser.email]) {
+      ranksMap[currentUser.email] = {
+        id: currentUser.email,
+        name: currentUser.name || 'Eu',
+        email: currentUser.email,
+        points: 0,
+        predictionsCount: 0
       };
+    }
+
+    predictions.forEach(pred => {
+      const email = pred.userEmail;
+      if (!email) return;
+
+      if (!ranksMap[email]) {
+        ranksMap[email] = {
+          id: email,
+          name: pred.userName || 'Usuário',
+          email: email,
+          points: 0,
+          predictionsCount: 0
+        };
+      }
+      
+      ranksMap[email].predictionsCount += 1;
+
+      const correspondingMatch = matches.find(m => m.id === pred.matchId);
+      if (correspondingMatch && correspondingMatch.status === 'Finalizado') {
+        ranksMap[email].points += calculatePoints(pred, correspondingMatch);
+      }
     });
+
+    return Object.values(ranksMap).sort((a, b) => b.points - a.points || b.predictionsCount - a.predictionsCount);
   };
 
   const computedRanking = getComputedLeaderboard();
