@@ -24,6 +24,7 @@ export default function MatchDetailBetting({
   const [scoreHome, setScoreHome] = useState(myExistingPrediction?.scoreHome ?? 0);
   const [scoreAway, setScoreAway] = useState(myExistingPrediction?.scoreAway ?? 0);
   const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Check time limit (15 mins before match)
   const parseDateString = (dateStr: string) => {
@@ -52,6 +53,19 @@ export default function MatchDetailBetting({
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!bettorName.trim()) return;
+
+    // Check if the exact score has already been predicted by someone else
+    const isDuplicate = matchPredictions.some(
+      p => p.scoreHome === scoreHome && 
+           p.scoreAway === scoreAway && 
+           p.userEmail !== currentUser.email
+    );
+
+    if (isDuplicate) {
+      setErrorMessage('Outro participante já escolheu esse exato placar. Escolha um resultado diferente!');
+      setTimeout(() => setErrorMessage(''), 5000);
+      return;
+    }
 
     onAddPrediction({
       matchId: match.id,
@@ -305,8 +319,15 @@ export default function MatchDetailBetting({
 
             {/* Success feedback toast */}
             {successMessage && (
-              <div className="bg-[#f7fff2] border border-[#006b2c]/20 text-[#006b2c] text-xs font-semibold px-4 py-2.5 rounded-xl text-center animate-pulse">
+              <div className="bg-[#f7fff2] border border-[#006b2c]/20 text-[#006b2c] text-xs font-semibold px-4 py-2.5 rounded-xl text-center animate-fade-in">
                 {successMessage}
+              </div>
+            )}
+
+            {/* Error feedback toast */}
+            {errorMessage && (
+              <div className="bg-[#fff0f0] border border-[#d32f2f]/20 text-[#d32f2f] text-xs font-semibold px-4 py-2.5 rounded-xl text-center animate-fade-in">
+                {errorMessage}
               </div>
             )}
 
