@@ -17,10 +17,10 @@ export default function BottomNavBar({ currentScreen, onNavigate, isAdmin }: Bot
       {/* Tab: Início */}
       <button
         onClick={() => onNavigate('home')}
-        className={`flex flex-col items-center justify-center transition-all active:scale-90 duration-150 py-1 px-4 rounded-full ${
+        className={`flex flex-col items-center justify-center transition-all duration-300 relative rounded-t-xl px-5 pt-3 pb-4 -mb-3 ${
           isInicioActive
-            ? 'bg-[#fed01b] text-[#6f5900] font-bold shadow-sm'
-            : 'text-[#3e4a3d] hover:bg-[#eceef0]/60'
+            ? 'bg-[#fed01b] text-[#6f5900] font-bold shadow-[0_-4px_12px_rgba(254,208,27,0.3)] -translate-y-2 z-10'
+            : 'text-[#3e4a3d] hover:bg-[#eceef0]/60 translate-y-1'
         }`}
       >
         <Home className={`w-5 h-5 ${isInicioActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
@@ -30,10 +30,10 @@ export default function BottomNavBar({ currentScreen, onNavigate, isAdmin }: Bot
       {/* Tab: Ranking */}
       <button
         onClick={() => onNavigate('ranking')}
-        className={`flex flex-col items-center justify-center transition-all active:scale-90 duration-150 py-1 px-4 rounded-full ${
+        className={`flex flex-col items-center justify-center transition-all duration-300 relative rounded-t-xl px-5 pt-3 pb-4 -mb-3 ${
           isRankingActive
-            ? 'bg-[#fed01b] text-[#6f5900] font-bold shadow-sm'
-            : 'text-[#3e4a3d] hover:bg-[#eceef0]/60'
+            ? 'bg-[#fed01b] text-[#6f5900] font-bold shadow-[0_-4px_12px_rgba(254,208,27,0.3)] -translate-y-2 z-10'
+            : 'text-[#3e4a3d] hover:bg-[#eceef0]/60 translate-y-1'
         }`}
       >
         <Trophy className={`w-5 h-5 ${isRankingActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
@@ -44,10 +44,10 @@ export default function BottomNavBar({ currentScreen, onNavigate, isAdmin }: Bot
       {isAdmin && (
         <button
           onClick={() => onNavigate('admin')}
-          className={`flex flex-col items-center justify-center transition-all active:scale-90 duration-150 py-1 px-4 rounded-full ${
+          className={`flex flex-col items-center justify-center transition-all duration-300 relative rounded-t-xl px-5 pt-3 pb-4 -mb-3 ${
             isAdminActive
-              ? 'bg-[#fed01b] text-[#6f5900] font-bold shadow-sm'
-              : 'text-[#3e4a3d] hover:bg-[#eceef0]/60'
+              ? 'bg-[#fed01b] text-[#6f5900] font-bold shadow-[0_-4px_12px_rgba(254,208,27,0.3)] -translate-y-2 z-10'
+              : 'text-[#3e4a3d] hover:bg-[#eceef0]/60 translate-y-1'
           }`}
         >
           <Settings className={`w-5 h-5 ${isAdminActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />

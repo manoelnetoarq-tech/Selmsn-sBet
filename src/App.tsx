@@ -23,6 +23,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState<UserProfile>(INITIAL_USER_PROFILE);
   const [matches, setMatches] = useState<Match[]>([]);
   const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [allProfiles, setAllProfiles] = useState<any[]>([]);
 
   const [authView, setAuthView] = useState<'login' | 'register' | 'recovery'>('login');
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
@@ -72,12 +73,13 @@ export default function App() {
   };
 
   const loadData = async () => {
-    const [matchesRes, predictionsRes] = await Promise.all([
+    const [matchesRes, predictionsRes, profilesRes] = await Promise.all([
       supabase.from('matches').select('*'),
       supabase.from('predictions').select(`
         *,
         profiles!inner(email, name, avatar)
-      `)
+      `),
+      supabase.from('profiles').select('id, email, name, avatar')
     ]);
 
     if (!matchesRes.error && matchesRes.data) {
@@ -111,6 +113,10 @@ export default function App() {
         createdAt: p.created_at
       })));
     }
+
+    if (!profilesRes.error && profilesRes.data) {
+      setAllProfiles(profilesRes.data);
+    }
   };
 
   // 2. Score Calculation Helpers (5 pts correct score, 3 pts correct outcome)
@@ -142,7 +148,18 @@ export default function App() {
     // Agrupa todos os usuários que têm palpites
     const ranksMap: Record<string, { id: string; name: string; email: string; points: number; predictionsCount: number }> = {};
 
-    // Inclui o usuário atual com 0 pontos caso ele não tenha palpites ainda
+    // Adiciona TODOS os perfis cadastrados no sistema com 0 pontos por padrão
+    allProfiles.forEach(profile => {
+      ranksMap[profile.email] = {
+        id: profile.email,
+        name: profile.name || 'Sem Nome',
+        email: profile.email,
+        points: 0,
+        predictionsCount: 0
+      };
+    });
+
+    // Garante que o usuário atual também esteja na lista (mesmo antes de atualizar do Supabase)
     if (currentUser.email && !ranksMap[currentUser.email]) {
       ranksMap[currentUser.email] = {
         id: currentUser.email,
@@ -278,7 +295,19 @@ export default function App() {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'home':
-        const selectedMatch = matches.find(m => m.id === selectedMatchId);
+        const parseDateStr = (dateStr: string) => {
+          try {
+            const [datePart, timePart] = dateStr.split(' às ');
+            const [day, month, year] = datePart.split('/');
+            const [hour, minute] = timePart.split(':');
+            return new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute)).getTime();
+          } catch (e) {
+            return 0;
+          }
+        };
+
+        const sortedMatches = [...matches].sort((a, b) => parseDateStr(a.dateStr) - parseDateStr(b.dateStr));
+        
         return (
           <div className="flex flex-col gap-6 animate-fade-in">
             {/* High Contrast Banner Welcome Section */}
@@ -300,7 +329,7 @@ export default function App() {
                 <div className="mt-6 flex gap-3 flex-wrap">
                   <button 
                     onClick={() => {
-                      const firstOpen = matches.find(m => m.status === 'Aberto');
+                      const firstOpen = sortedMatches.find(m => m.status === 'Aberto');
                       if (firstOpen) {
                         setSelectedMatchId(firstOpen.id);
                         setCurrentScreen('match-details');
@@ -335,7 +364,7 @@ export default function App() {
 
               {/* Horizontal scroll container on mobile, fits beautiful card list */}
               <div className="flex md:grid md:grid-cols-2 gap-4 overflow-x-auto no-scrollbar py-2 shrink-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0">
-                {matches.map((match) => (
+                {sortedMatches.map((match) => (
                   <MatchCard 
                     key={match.id}
                     match={match}

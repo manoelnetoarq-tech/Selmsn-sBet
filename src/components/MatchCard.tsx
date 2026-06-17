@@ -1,5 +1,6 @@
 import { Calendar, Users, ChevronRight, Lock, CheckCircle, Flame } from 'lucide-react';
 import { Match, Prediction } from '../types';
+import CountdownTimer from './CountdownTimer';
 
 interface MatchCardProps {
   key?: string;
@@ -114,32 +115,37 @@ export default function MatchCard({ match, predictions, currentUserEmail, onSele
       </div>
 
       {/* Footer Details Card */}
-      <div className="mt-auto pt-4 border-t border-[#f2f4f6] flex items-center justify-between">
-        {userPrediction ? (
-          <div className="flex flex-col">
-            <span className="text-[11px] font-sans text-[#3e4a3d]">Seu palpite:</span>
-            <span className="font-poppins font-bold text-sm text-[#006b2c] flex items-center gap-1">
-              <Flame className="w-3.5 h-3.5 fill-[#fed01b] stroke-[#735c00]" />
-              {getInitials(match.teamHome)} {userPrediction.scoreHome} x {userPrediction.scoreAway} {getInitials(match.teamAway)}
+      <div className="mt-auto pt-4 border-t border-[#f2f4f6] flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          {userPrediction ? (
+            <div className="flex flex-col">
+              <span className="text-[11px] font-sans text-[#3e4a3d]">Seu palpite:</span>
+              <span className="font-poppins font-bold text-sm text-[#006b2c] flex items-center gap-1">
+                <Flame className="w-3.5 h-3.5 fill-[#fed01b] stroke-[#735c00]" />
+                {getInitials(match.teamHome)} {userPrediction.scoreHome} x {userPrediction.scoreAway} {getInitials(match.teamAway)}
+              </span>
+            </div>
+          ) : (
+            <span className="text-[#3e4a3d] font-sans text-xs flex items-center gap-1 select-none">
+              <Users className="w-4 h-4 text-[#6e7b6c]" />
+              {matchPredictions.length} {matchPredictions.length === 1 ? 'palpite enviado' : 'palpites enviados'}
             </span>
-          </div>
-        ) : (
-          <span className="text-[#3e4a3d] font-sans text-xs flex items-center gap-1 select-none">
-            <Users className="w-4 h-4 text-[#6e7b6c]" />
-            {matchPredictions.length} {matchPredictions.length === 1 ? 'palpite enviado' : 'palpites enviados'}
-          </span>
-        )}
+          )}
 
-        <button 
-          className={`font-sans text-xs font-semibold py-2 px-4 rounded-full transition-all active:scale-95 flex items-center gap-1 cursor-pointer ${
-            match.status === 'Aberto' 
-              ? 'bg-[#006b2c] text-white hover:bg-[#005320] shadow-sm'
-              : 'bg-[#eceef0] text-[#3e4a3d] hover:bg-[#e0e3e5]'
-          }`}
-        >
-          {match.status === 'Aberto' ? 'Dar palpite' : 'Ver detalhes'}
-          <ChevronRight className="w-3.5 h-3.5" />
-        </button>
+          <button 
+            className={`font-sans text-xs font-semibold py-2 px-4 rounded-full transition-all active:scale-95 flex items-center gap-1 cursor-pointer ${
+              match.status === 'Aberto' 
+                ? 'bg-[#006b2c] text-white hover:bg-[#005320] shadow-sm'
+                : 'bg-[#eceef0] text-[#3e4a3d] hover:bg-[#e0e3e5]'
+            }`}
+          >
+            {match.status === 'Aberto' ? 'Dar palpite' : 'Ver detalhes'}
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* Countdown Timer Wrapper */}
+        <CountdownTimer dateStr={match.dateStr} status={match.status} />
       </div>
     </article>
   );
