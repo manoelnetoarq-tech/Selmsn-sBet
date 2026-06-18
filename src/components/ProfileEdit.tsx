@@ -71,6 +71,16 @@ export default function ProfileEdit({
     }
 
     try {
+      // No iOS Safari, a requisição de permissão DEVE ser a primeira coisa, antes de qualquer "await"
+      let permission = Notification.permission;
+      if (!isPushEnabled && permission !== 'granted') {
+        permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+          alert('Você precisa permitir as notificações no navegador.');
+          return;
+        }
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         alert('Você precisa estar logado.');
@@ -92,12 +102,6 @@ export default function ProfileEdit({
         setIsPushEnabled(false);
       } else {
         // Subscribe
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-          alert('Você precisa permitir as notificações no navegador.');
-          return;
-        }
-
         const subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
@@ -340,6 +344,7 @@ export default function ProfileEdit({
             
             {/* Notifications Toggle */}
             <button 
+              type="button"
               onClick={handleTogglePush}
               className="w-full bg-white border border-[#eceef0] p-3.5 rounded-2xl flex items-center justify-between shadow-sm hover:bg-[#eceef0]/30 transition-colors cursor-pointer group"
             >
