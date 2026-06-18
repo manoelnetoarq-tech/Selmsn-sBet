@@ -25,7 +25,7 @@ self.addEventListener('push', function (event) {
       },
     };
 
-    event.waitUntil(self.registration.showNotification(data.title || 'Selman''s Bet', options));
+    event.waitUntil(self.registration.showNotification(data.title || "Selman's Bet", options));
   }
 });
 
