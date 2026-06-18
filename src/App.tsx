@@ -365,12 +365,47 @@ export default function App() {
           }
         };
 
-        const sortedMatches = [...matches].sort((a, b) => parseDateStr(a.dateStr) - parseDateStr(b.dateStr));
+        const sortedMatches = [...matches].sort((a, b) => {
+          if (a.status === 'Ao Vivo' && b.status !== 'Ao Vivo') return -1;
+          if (a.status !== 'Ao Vivo' && b.status === 'Ao Vivo') return 1;
+          return parseDateStr(a.dateStr) - parseDateStr(b.dateStr);
+        });
+
+        const liveMatches = sortedMatches.filter(m => m.status === 'Ao Vivo');
         
         return (
           <div className="flex flex-col gap-6 animate-fade-in">
+            {liveMatches.length > 0 && (
+              <div className="relative overflow-hidden bg-gradient-to-r from-[#e01424] to-[#ff2b3d] text-white rounded-2xl md:rounded-[24px] flex items-center shadow-md border border-[#ff4a5a]/30 -mx-2 md:mx-0 mt-2">
+                <div className="flex items-center gap-2 pr-6 pl-4 py-2.5 md:py-3 z-10 bg-gradient-to-r from-[#e01424] via-[#e01424] to-transparent font-poppins font-bold uppercase text-xs md:text-sm tracking-wider">
+                  <span className="w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-pulse"></span>
+                  <span className="hidden md:inline">Ao Vivo</span>
+                  <span className="md:hidden">Live</span>
+                </div>
+                <div className="flex-1 overflow-hidden relative h-10">
+                  <div className="absolute whitespace-nowrap animate-marquee flex items-center gap-8 md:gap-12 h-full top-0">
+                    {liveMatches.map((m, idx) => (
+                      <span key={idx} className="font-sans font-semibold text-sm md:text-base flex items-center gap-2">
+                        <span>{m.teamHome}</span>
+                        <span className="bg-black/20 px-2 py-0.5 rounded font-bold">{m.scoreHome ?? 0} x {m.scoreAway ?? 0}</span>
+                        <span>{m.teamAway}</span>
+                      </span>
+                    ))}
+                    {/* Duplicate for smooth continuous scroll on wide screens */}
+                    {liveMatches.length < 3 && liveMatches.map((m, idx) => (
+                      <span key={`dup-${idx}`} className="font-sans font-semibold text-sm md:text-base flex items-center gap-2 hidden md:flex">
+                        <span>{m.teamHome}</span>
+                        <span className="bg-black/20 px-2 py-0.5 rounded font-bold">{m.scoreHome ?? 0} x {m.scoreAway ?? 0}</span>
+                        <span>{m.teamAway}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* High Contrast Banner Welcome Section */}
-            <section className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[#006b2c] to-[#00873a] p-6 md:p-10 shadow-[0_10px_30px_rgba(15,23,42,0.08)] text-white mt-2">
+            <section className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[#006b2c] to-[#00873a] p-6 md:p-10 shadow-[0_10px_30px_rgba(15,23,42,0.08)] text-white mt-1 md:mt-2">
               <div 
                 className="absolute inset-0 opacity-10 pointer-events-none" 
                 style={{
