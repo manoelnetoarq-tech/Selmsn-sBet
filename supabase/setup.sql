@@ -134,6 +134,7 @@ set role = 'Admin da Resenha'
 where email = 'manoel.neto.arq@gmail.com';
 
 -- ==========================================
+-- ==========================================
 -- TABELA DE NOTIFICAÇÕES (PUSH SUBSCRIPTIONS)
 -- ==========================================
 create table if not exists public.push_subscriptions (
@@ -150,3 +151,25 @@ alter table public.push_subscriptions enable row level security;
 create policy "Users can insert own subscriptions" on public.push_subscriptions for insert with check (auth.uid() = user_id);
 create policy "Users can view own subscriptions" on public.push_subscriptions for select using (auth.uid() = user_id);
 create policy "Users can delete own subscriptions" on public.push_subscriptions for delete using (auth.uid() = user_id);
+
+-- ==========================================
+-- SCRIPT DE CHAT INTERNO (RESENHA)
+-- ==========================================
+
+-- Criação da tabela de mensagens
+create table if not exists public.chat_messages (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  content text not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Habilitar RLS
+alter table public.chat_messages enable row level security;
+
+-- Políticas de segurança: todos veem, apenas logados enviam
+create policy "Chat messages viewable by everyone" on public.chat_messages for select using (true);
+create policy "Users can insert own messages" on public.chat_messages for insert with check (auth.uid() = user_id);
+
+-- Habilitar tempo real (Realtime) para a tabela chat_messages
+alter publication supabase_realtime add table public.chat_messages;

@@ -12,6 +12,7 @@ import MatchDetailBetting from './components/MatchDetailBetting';
 import AdminPanel from './components/AdminPanel';
 import ProfileEdit from './components/ProfileEdit';
 import AuthScreens from './components/AuthScreens';
+import ChatScreen from './components/ChatScreen';
 import { Trophy, Compass, Star, Flame, Award, ShieldAlert } from 'lucide-react';
 
 import { supabase } from './lib/supabase';
@@ -397,6 +398,9 @@ export default function App() {
             onAddPrediction={handleAddPrediction}
           />
         );
+
+      case 'chat':
+        return <ChatScreen currentUser={currentUser} />;
 
       case 'ranking':
         return (

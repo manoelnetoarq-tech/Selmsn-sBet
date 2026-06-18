@@ -37,11 +37,24 @@ export interface UserProfile {
   totalPoints: number;
 }
 
+export interface ChatMessage {
+  id: string;
+  userId: string;
+  content: string;
+  createdAt: string;
+  profiles?: {
+    name: string;
+    avatar: string;
+    email: string;
+  };
+}
+
 export type Screen = 
   | 'login'
   | 'register'
   | 'recovery'
   | 'home'
+  | 'chat'
   | 'match-details'
   | 'ranking'
   | 'profile'

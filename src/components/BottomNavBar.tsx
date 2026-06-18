@@ -1,4 +1,4 @@
-import { Home, Trophy, Settings } from 'lucide-react';
+import { Home, Trophy, Settings, MessageCircle } from 'lucide-react';
 import { Screen } from '../types';
 
 interface BottomNavBarProps {
@@ -10,10 +10,12 @@ interface BottomNavBarProps {
 export default function BottomNavBar({ currentScreen, onNavigate, isAdmin }: BottomNavBarProps) {
   const isInicioActive = ['home', 'match-details'].includes(currentScreen);
   const isRankingActive = currentScreen === 'ranking';
+  const isChatActive = currentScreen === 'chat';
   const isAdminActive = currentScreen === 'admin';
 
   const navItems = [
     { id: 'home', icon: Home, label: 'Início', isActive: isInicioActive },
+    { id: 'chat', icon: MessageCircle, label: 'Resenha', isActive: isChatActive },
     { id: 'ranking', icon: Trophy, label: 'Ranking', isActive: isRankingActive },
   ];
   
