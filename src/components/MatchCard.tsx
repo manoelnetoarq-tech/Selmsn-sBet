@@ -22,6 +22,7 @@ export default function MatchCard({ match, predictions, currentUserEmail, onSele
     if (team === 'Espanha') return 'ESP';
     if (team === 'Alemanha') return 'GER';
     if (team === 'Suíça') return 'SUI';
+    if (team === 'Portugal') return 'POR';
     return team.substring(0, 3).toUpperCase();
   };
 
