@@ -48,7 +48,7 @@ export default function Header({ currentScreen, onNavigate, onBack, userAvatar, 
 
           <div 
             onClick={() => onNavigate('home')} 
-            className="flex items-center cursor-pointer active:scale-98 transition-transform"
+            className="flex items-center gap-3 cursor-pointer active:scale-98 transition-transform"
           >
             <img 
               src="/Logo.png" 
@@ -56,6 +56,9 @@ export default function Header({ currentScreen, onNavigate, onBack, userAvatar, 
               className="h-10 md:h-12 w-auto object-contain"
               referrerPolicy="no-referrer"
             />
+            <span className="font-poppins font-bold text-[#191c1e] text-lg md:text-xl tracking-tight">
+              Selman'sBet
+            </span>
           </div>
 
           {!hasBack && currentScreen !== 'home' && (
