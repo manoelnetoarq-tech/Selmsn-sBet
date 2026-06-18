@@ -116,9 +116,9 @@ export default function ChatScreen({ currentUser }: ChatScreenProps) {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] md:h-[calc(100vh-180px)] -mx-4 md:mx-0 bg-[#f2f4f6] md:rounded-2xl overflow-hidden shadow-sm relative">
+    <div className="flex flex-col fixed top-[80px] bottom-[90px] left-0 right-0 md:relative md:top-auto md:bottom-auto md:left-auto md:right-auto md:h-[calc(100vh-180px)] bg-[#f2f4f6] md:rounded-2xl overflow-hidden shadow-sm z-10">
       {/* Mensagens list */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-[#8e9894] space-y-3">
             <MessageSquare className="w-12 h-12 stroke-[1.5]" />
