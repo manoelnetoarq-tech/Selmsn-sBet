@@ -147,7 +147,7 @@ export default function App() {
   // 3. Dynamic Ranking Computations
   const getComputedLeaderboard = () => {
     // Agrupa todos os usuários que têm palpites
-    const ranksMap: Record<string, { id: string; name: string; email: string; points: number; predictionsCount: number }> = {};
+    const ranksMap: Record<string, { id: string; name: string; email: string; avatar?: string; points: number; predictionsCount: number }> = {};
 
     // Adiciona TODOS os perfis cadastrados no sistema com 0 pontos por padrão
     allProfiles.forEach(profile => {
@@ -155,6 +155,7 @@ export default function App() {
         id: profile.email,
         name: profile.name || 'Sem Nome',
         email: profile.email,
+        avatar: profile.avatar || '',
         points: 0,
         predictionsCount: 0
       };
@@ -166,6 +167,7 @@ export default function App() {
         id: currentUser.email,
         name: currentUser.name || 'Eu',
         email: currentUser.email,
+        avatar: currentUser.avatar || '',
         points: 0,
         predictionsCount: 0
       };
@@ -180,6 +182,7 @@ export default function App() {
           id: email,
           name: pred.userName || 'Usuário',
           email: email,
+          avatar: pred.userAvatar || '',
           points: 0,
           predictionsCount: 0
         };

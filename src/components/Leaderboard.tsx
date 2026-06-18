@@ -6,6 +6,7 @@ interface LeaderboardProps {
     id: string;
     name: string;
     email: string;
+    avatar?: string;
     points: number;
     predictionsCount: number;
   }>;
@@ -55,15 +56,20 @@ export default function Leaderboard({ rankingData, currentUser }: LeaderboardPro
                   1
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-poppins font-bold text-base text-[#191c1e] flex items-center gap-1">
-                    {firstPlace.name}
+                  <div className="font-poppins font-bold text-base text-[#191c1e] flex items-center gap-1">
+                    {firstPlace.avatar ? (
+                      <img src={firstPlace.avatar} alt="Avatar" className="w-6 h-6 rounded-full object-cover shrink-0 mr-1 border border-[#eceef0]" referrerPolicy="no-referrer" />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full shrink-0 mr-1 bg-[#eceef0]" />
+                    )}
+                    <span className="truncate max-w-[120px] xs:max-w-[150px]">{firstPlace.name}</span>
                     {firstPlace.email === currentUser.email && (
                       <span className="text-[10px] bg-[#006b2c] text-white px-1.5 py-0.5 rounded-full font-semibold font-sans">
                         Você
                       </span>
                     )}
-                  </span>
-                  <span className="font-sans text-[11px] text-[#3e4a3d]">
+                  </div>
+                  <span className="font-sans text-[11px] text-[#3e4a3d] mt-0.5">
                     {firstPlace.predictionsCount} {firstPlace.predictionsCount === 1 ? 'palpite' : 'palpites'}
                   </span>
                 </div>
@@ -85,15 +91,20 @@ export default function Leaderboard({ rankingData, currentUser }: LeaderboardPro
                   2
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-poppins font-semibold text-sm text-[#191c1e] flex items-center gap-1">
-                    {secondPlace.name}
+                  <div className="font-poppins font-semibold text-sm text-[#191c1e] flex items-center gap-1">
+                    {secondPlace.avatar ? (
+                      <img src={secondPlace.avatar} alt="Avatar" className="w-5 h-5 rounded-full object-cover shrink-0 mr-1 border border-[#eceef0]" referrerPolicy="no-referrer" />
+                    ) : (
+                      <div className="w-5 h-5 rounded-full shrink-0 mr-1 bg-[#eceef0]" />
+                    )}
+                    <span className="truncate max-w-[130px] xs:max-w-[160px]">{secondPlace.name}</span>
                     {secondPlace.email === currentUser.email && (
                       <span className="text-[10px] bg-[#006b2c] text-white px-1.5 py-0.5 rounded-full font-semibold font-sans">
                         Você
                       </span>
                     )}
-                  </span>
-                  <span className="font-sans text-[11px] text-[#6e7b6c]">
+                  </div>
+                  <span className="font-sans text-[11px] text-[#6e7b6c] mt-0.5">
                     {secondPlace.predictionsCount} {secondPlace.predictionsCount === 1 ? 'palpite' : 'palpites'}
                   </span>
                 </div>
@@ -112,15 +123,20 @@ export default function Leaderboard({ rankingData, currentUser }: LeaderboardPro
                   3
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-poppins font-semibold text-sm text-[#191c1e] flex items-center gap-1">
-                    {thirdPlace.name}
+                  <div className="font-poppins font-semibold text-sm text-[#191c1e] flex items-center gap-1">
+                    {thirdPlace.avatar ? (
+                      <img src={thirdPlace.avatar} alt="Avatar" className="w-5 h-5 rounded-full object-cover shrink-0 mr-1 border border-[#eceef0]" referrerPolicy="no-referrer" />
+                    ) : (
+                      <div className="w-5 h-5 rounded-full shrink-0 mr-1 bg-[#eceef0]" />
+                    )}
+                    <span className="truncate max-w-[130px] xs:max-w-[160px]">{thirdPlace.name}</span>
                     {thirdPlace.email === currentUser.email && (
                       <span className="text-[10px] bg-[#006b2c] text-white px-1.5 py-0.5 rounded-full font-semibold font-sans">
                         Você
                       </span>
                     )}
-                  </span>
-                  <span className="font-sans text-[11px] text-[#6e7b6c]">
+                  </div>
+                  <span className="font-sans text-[11px] text-[#6e7b6c] mt-0.5">
                     {thirdPlace.predictionsCount} {thirdPlace.predictionsCount === 1 ? 'palpite' : 'palpites'}
                   </span>
                 </div>
@@ -147,15 +163,20 @@ export default function Leaderboard({ rankingData, currentUser }: LeaderboardPro
                     {index + 4}
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-sans text-sm font-semibold text-[#191c1e] flex items-center gap-1">
-                      {entry.name}
+                    <div className="font-sans text-sm font-semibold text-[#191c1e] flex items-center gap-1">
+                      {entry.avatar ? (
+                        <img src={entry.avatar} alt="Avatar" className="w-5 h-5 rounded-full object-cover shrink-0 mr-1 border border-[#eceef0]" referrerPolicy="no-referrer" />
+                      ) : (
+                        <div className="w-5 h-5 rounded-full shrink-0 mr-1 bg-[#eceef0]" />
+                      )}
+                      <span className="truncate max-w-[140px] xs:max-w-[170px]">{entry.name}</span>
                       {entry.email === currentUser.email && (
                         <span className="text-[10px] bg-[#006b2c] text-white px-1.5 py-0.5 rounded-full font-medium font-sans">
                           Você
                         </span>
                       )}
-                    </span>
-                    <span className="font-sans text-[11px] text-[#6e7b6c]">
+                    </div>
+                    <span className="font-sans text-[11px] text-[#6e7b6c] mt-0.5">
                       {entry.predictionsCount} {entry.predictionsCount === 1 ? 'palpite' : 'palpites'}
                     </span>
                   </div>
