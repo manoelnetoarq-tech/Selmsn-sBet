@@ -66,7 +66,7 @@ export default function ProfileEdit({
 
   const handleTogglePush = async () => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      alert('Seu navegador não suporta notificações Push.');
+      alert('Seu navegador ou dispositivo não suporta notificações Push (Ex: iPhone antigo ou sem PWA instalado).');
       return;
     }
 
@@ -76,18 +76,22 @@ export default function ProfileEdit({
       if (!isPushEnabled && permission !== 'granted') {
         permission = await Notification.requestPermission();
         if (permission !== 'granted') {
-          alert('Você precisa permitir as notificações no navegador.');
+          alert('Permissão negada! Você precisa permitir as notificações nas configurações do seu navegador ou aparelho.');
           return;
         }
       }
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        alert('Você precisa estar logado.');
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        alert('Erro: Você precisa estar logado para ativar notificações.');
         return;
       }
 
       const registration = await navigator.serviceWorker.ready;
+      if (!registration) {
+        alert('Erro: Service Worker não inicializado.');
+        return;
+      }
 
       if (isPushEnabled) {
         // Unsubscribe
@@ -102,10 +106,13 @@ export default function ProfileEdit({
         setIsPushEnabled(false);
       } else {
         // Subscribe
-        const subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-        });
+        let subscription = await registration.pushManager.getSubscription();
+        if (!subscription) {
+          subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+          });
+        }
 
         const subJson = subscription.toJSON();
         
@@ -119,16 +126,16 @@ export default function ProfileEdit({
         
         if (error) {
           console.error(error);
-          alert('Erro ao salvar notificação no banco de dados.');
+          alert('Erro no Banco (A tabela push_subscriptions existe?): ' + error.message);
           return;
         }
 
         setIsPushEnabled(true);
         alert('Notificações ativadas com sucesso!');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error toggling push:', error);
-      alert('Ocorreu um erro ao configurar as notificações.');
+      alert('Erro ao configurar notificações: ' + (error.message || 'Erro Desconhecido'));
     }
   };
 
