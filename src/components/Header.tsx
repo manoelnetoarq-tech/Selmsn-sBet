@@ -34,8 +34,8 @@ export default function Header({ currentScreen, onNavigate, onBack, userAvatar, 
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-[#f7f9fb] shadow-[0_10px_30px_rgba(15,23,42,0.06)] h-20 md:h-24 flex items-center transition-all">
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-10 flex items-center justify-between h-full">
-        <div className="flex items-center gap-3">
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-10 flex items-center justify-between h-full relative">
+        <div className="flex items-center gap-3 relative z-10">
           {hasBack && (
             <button
               onClick={onBack}
@@ -66,6 +66,13 @@ export default function Header({ currentScreen, onNavigate, onBack, userAvatar, 
               {getTitle()}
             </span>
           )}
+        </div>
+
+        {/* Mobile Centered Title */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:hidden pointer-events-none w-max z-0">
+          <h1 className="font-poppins font-bold text-[17px] text-[#191c1e] tracking-tight">
+            Bolão da Resenha
+          </h1>
         </div>
 
         {/* Desktop inline navigator */}
