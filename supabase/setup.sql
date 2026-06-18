@@ -132,3 +132,21 @@ on storage.objects for update with check ( bucket_id = 'prizes' and auth.role() 
 update public.profiles
 set role = 'Admin da Resenha'
 where email = 'manoel.neto.arq@gmail.com';
+
+-- ==========================================
+-- TABELA DE NOTIFICAÇÕES (PUSH SUBSCRIPTIONS)
+-- ==========================================
+create table if not exists public.push_subscriptions (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  endpoint text not null,
+  p256dh text not null,
+  auth text not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  constraint unique_user_endpoint unique (user_id, endpoint)
+);
+
+alter table public.push_subscriptions enable row level security;
+create policy "Users can insert own subscriptions" on public.push_subscriptions for insert with check (auth.uid() = user_id);
+create policy "Users can view own subscriptions" on public.push_subscriptions for select using (auth.uid() = user_id);
+create policy "Users can delete own subscriptions" on public.push_subscriptions for delete using (auth.uid() = user_id);

@@ -1,7 +1,8 @@
-import { useState, FormEvent, useRef, ChangeEvent } from 'react';
+import { useState, useEffect, FormEvent, useRef, ChangeEvent } from 'react';
 import { 
-  User, Mail, Camera, Save, Lock, ArrowLeft, ArrowRight, LogOut, Award, 
-  Settings, Key, ShieldAlert, CheckCircle, Clock, ChevronRight, BarChart, Trophy, Upload
+  User, Mail, Camera, Save, Lock, ArrowLeft, LogOut, Award, 
+  Key, ShieldAlert, CheckCircle, Clock, ChevronRight, BarChart, Trophy, Upload,
+  Bell, BellOff
 } from 'lucide-react';
 import { UserProfile, Match, Prediction, Screen } from '../types';
 import { supabase } from '../lib/supabase';
@@ -37,6 +38,95 @@ export default function ProfileEdit({
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passMessage, setPassMessage] = useState('');
+
+  // Push Notifications State
+  const [isPushEnabled, setIsPushEnabled] = useState(false);
+  const VAPID_PUBLIC_KEY = 'BDwqgVAKA3xaxShVHrrtI9ItMF1Oh_E4iIWg9lmK3jSZOkqdxeQzM8I2oyAJ9o5QplyXgZou_CqOiKX49gWeXBc';
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker.ready.then(registration => {
+        registration.pushManager.getSubscription().then(subscription => {
+          setIsPushEnabled(!!subscription);
+        });
+      });
+    }
+  }, []);
+
+  const urlBase64ToUint8Array = (base64String: string) => {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  };
+
+  const handleTogglePush = async () => {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      alert('Seu navegador não suporta notificações Push.');
+      return;
+    }
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        alert('Você precisa estar logado.');
+        return;
+      }
+
+      const registration = await navigator.serviceWorker.ready;
+
+      if (isPushEnabled) {
+        // Unsubscribe
+        const subscription = await registration.pushManager.getSubscription();
+        if (subscription) {
+          await subscription.unsubscribe();
+          await supabase
+            .from('push_subscriptions')
+            .delete()
+            .eq('endpoint', subscription.endpoint);
+        }
+        setIsPushEnabled(false);
+      } else {
+        // Subscribe
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+          alert('Você precisa permitir as notificações no navegador.');
+          return;
+        }
+
+        const subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+
+        const subJson = subscription.toJSON();
+        
+        // Upsert if the user logs in from same device but different account, or just insert
+        const { error } = await supabase.from('push_subscriptions').upsert({
+          user_id: user.id,
+          endpoint: subJson.endpoint,
+          p256dh: subJson.keys?.p256dh,
+          auth: subJson.keys?.auth
+        }, { onConflict: 'user_id, endpoint' });
+        
+        if (error) {
+          console.error(error);
+          alert('Erro ao salvar notificação no banco de dados.');
+          return;
+        }
+
+        setIsPushEnabled(true);
+        alert('Notificações ativadas com sucesso!');
+      }
+    } catch (error) {
+      console.error('Error toggling push:', error);
+      alert('Ocorreu um erro ao configurar as notificações.');
+    }
+  };
 
   // Sample avatars list to pick from
   const SAMPLE_AVATARS = [
@@ -247,6 +337,25 @@ export default function ProfileEdit({
           {/* Actions Settings Section */}
           <section className="flex flex-col gap-2 pt-2">
             <h3 className="font-poppins font-bold text-sm text-[#191c1e] px-1 mb-1">Ações de Conta</h3>
+            
+            {/* Notifications Toggle */}
+            <button 
+              onClick={handleTogglePush}
+              className="w-full bg-white border border-[#eceef0] p-3.5 rounded-2xl flex items-center justify-between shadow-sm hover:bg-[#eceef0]/30 transition-colors cursor-pointer group"
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isPushEnabled ? 'bg-[#006b2c]/10 text-[#006b2c]' : 'bg-[#555b70]/10 text-[#555b70]'}`}>
+                  {isPushEnabled ? <Bell className="w-5 h-5" /> : <BellOff className="w-5 h-5" />}
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="font-sans text-sm font-semibold text-[#191c1e]">Notificações do App</span>
+                  <span className="font-sans text-[10px] text-[#6e7b6c]">{isPushEnabled ? 'Ativadas (Gols e Placar)' : 'Desativadas'}</span>
+                </div>
+              </div>
+              <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isPushEnabled ? 'bg-[#006b2c]' : 'bg-[#eceef0]'}`}>
+                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${isPushEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
+              </div>
+            </button>
             
             <button 
               onClick={() => setProfileView('edit')}

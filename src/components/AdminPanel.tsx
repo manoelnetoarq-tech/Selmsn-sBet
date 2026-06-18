@@ -1,5 +1,5 @@
 import { useState, FormEvent, useRef, ChangeEvent } from 'react';
-import { PlusCircle, ArrowRight, Edit, RefreshCw, CheckSquare, Trash2, Calendar, Lock, ShieldAlert, Upload } from 'lucide-react';
+import { PlusCircle, ArrowRight, Edit, RefreshCw, CheckSquare, Trash2, Calendar, Lock, ShieldAlert, Upload, BellRing } from 'lucide-react';
 import { Match, Prediction, MatchStatus } from '../types';
 import { supabase } from '../lib/supabase';
 
@@ -47,6 +47,11 @@ export default function AdminPanel({
   // Launch Score Inputs State
   const [launchScoreHome, setLaunchScoreHome] = useState<number>(0);
   const [launchScoreAway, setLaunchScoreAway] = useState<number>(0);
+
+  // Push Notification Inputs State
+  const [pushTitle, setPushTitle] = useState('');
+  const [pushBody, setPushBody] = useState('');
+  const [isSendingPush, setIsSendingPush] = useState(false);
 
   const handleFlagUpload = async (event: ChangeEvent<HTMLInputElement>, isHome: boolean) => {
     try {
@@ -166,6 +171,31 @@ export default function AdminPanel({
     setLaunchScoreAway(0);
   };
 
+  const handleSendPush = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!pushTitle.trim() || !pushBody.trim()) return;
+
+    setIsSendingPush(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-push', {
+        body: {
+          title: pushTitle,
+          body: pushBody,
+        }
+      });
+
+      if (error) throw error;
+      alert('Notificações enviadas com sucesso!');
+      setPushTitle('');
+      setPushBody('');
+    } catch (err: any) {
+      console.error(err);
+      alert('Erro ao enviar notificação. Verifique se a Edge Function está implantada e os secrets configurados.');
+    } finally {
+      setIsSendingPush(false);
+    }
+  };
+
   return (
     <section className="w-full max-w-2xl mx-auto flex flex-col gap-6 animate-fade-in pb-16 select-none">
       
@@ -179,6 +209,45 @@ export default function AdminPanel({
           </span>
         </div>
       </div>
+
+      {/* Push Notifications Panel */}
+      <section className="bg-white rounded-[24px] p-5 shadow-[0_10px_30px_rgba(15,23,42,0.06)] flex flex-col gap-4 border border-[#eceef0]">
+        <div className="flex items-center gap-2 border-b border-[#f2f4f6] pb-3">
+          <BellRing className="w-5 h-5 text-[#006b2c]" />
+          <h3 className="font-poppins font-bold text-[#191c1e] text-base">Enviar Notificação Push</h3>
+        </div>
+        <form onSubmit={handleSendPush} className="flex flex-col gap-3">
+          <div>
+            <label className="block text-xs font-semibold text-[#3e4a3d] mb-1 font-sans">Título da Notificação</label>
+            <input 
+              type="text" 
+              placeholder="Ex: ⚽ Gol do Brasil!"
+              value={pushTitle}
+              onChange={(e) => setPushTitle(e.target.value)}
+              className="w-full h-11 bg-[#f2f4f6] border border-[#eceef0] rounded-xl px-4 text-xs font-sans text-[#191c1e] outline-none"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-[#3e4a3d] mb-1 font-sans">Mensagem</label>
+            <textarea 
+              placeholder="Ex: O jogo começou e a emoção está no ar! Acesse para palpitar..."
+              value={pushBody}
+              onChange={(e) => setPushBody(e.target.value)}
+              rows={2}
+              className="w-full bg-[#f2f4f6] border border-[#eceef0] rounded-xl px-4 py-3 text-xs font-sans text-[#191c1e] outline-none resize-none"
+              required
+            />
+          </div>
+          <button 
+            type="submit"
+            disabled={isSendingPush}
+            className="w-full py-3 bg-[#006b2c] text-white font-sans text-xs font-bold rounded-xl shadow-sm hover:bg-[#005320] active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
+          >
+            {isSendingPush ? 'Enviando...' : 'Disparar para todos os usuários'}
+          </button>
+        </form>
+      </section>
 
       {/* Primary Action Panel */}
       <div className="grid grid-cols-1 gap-4">
