@@ -154,11 +154,22 @@ export default function MatchDetailBetting({
 
             {/* Score or VS in Header */}
             <div className="flex flex-col items-center justify-center px-2">
-              {match.status === 'Finalizado' || match.status === 'Fechado' ? (
-                <div className="bg-[#555b70]/10 text-[#191c1e] font-poppins font-bold text-xl md:text-2xl px-4 py-1.5 rounded-2xl flex items-center gap-2 border border-[#555b70]/20 shadow-sm">
-                  <span>{match.scoreHome ?? '-'}</span>
-                  <span className="text-[#bdcaba] text-sm font-normal">x</span>
-                  <span>{match.scoreAway ?? '-'}</span>
+              {(match.scoreHome !== undefined && match.scoreHome !== null) || match.status === 'Finalizado' || match.status === 'Fechado' ? (
+                <div className={`font-poppins font-bold text-xl md:text-2xl px-4 py-1.5 rounded-2xl flex flex-col items-center border shadow-sm ${
+                  match.status !== 'Finalizado' && match.scoreHome !== null && match.scoreHome !== undefined
+                    ? 'border-[#fed01b] bg-[#fff9e6] text-[#735c00]' 
+                    : 'border-[#555b70]/20 bg-[#555b70]/10 text-[#191c1e]'
+                }`}>
+                  {match.status !== 'Finalizado' && match.scoreHome !== null && match.scoreHome !== undefined && (
+                    <span className="text-[10px] uppercase tracking-wider font-bold text-[#00873a] animate-pulse mt-0.5 -mb-1">Ao Vivo</span>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <span>{match.scoreHome ?? '-'}</span>
+                    <span className={`text-sm font-normal ${
+                      match.status !== 'Finalizado' && match.scoreHome !== null && match.scoreHome !== undefined ? 'text-[#6f5900]' : 'text-[#bdcaba]'
+                    }`}>x</span>
+                    <span>{match.scoreAway ?? '-'}</span>
+                  </div>
                 </div>
               ) : (
                 <span className="font-poppins font-bold text-xl text-[#bdcaba]">X</span>

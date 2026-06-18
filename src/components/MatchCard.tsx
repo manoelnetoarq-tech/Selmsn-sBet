@@ -80,11 +80,22 @@ export default function MatchCard({ match, predictions, currentUserEmail, onSele
 
         {/* VS / Score Divider */}
         <div className="flex flex-col items-center justify-center px-3 z-10">
-          {match.status === 'Finalizado' || match.status === 'Fechado' ? (
-            <div className="bg-[#555b70]/10 text-[#191c1e] font-poppins font-bold text-lg md:text-xl px-3 py-1 rounded-xl flex items-center gap-2 border border-[#555b70]/20 shadow-sm">
-              <span>{match.scoreHome ?? '-'}</span>
-              <span className="text-[#6e7b6c] text-xs font-normal">x</span>
-              <span>{match.scoreAway ?? '-'}</span>
+          {(match.scoreHome !== undefined && match.scoreHome !== null) || match.status === 'Finalizado' || match.status === 'Fechado' ? (
+            <div className={`font-poppins font-bold text-lg md:text-xl px-3 py-1 rounded-xl flex flex-col items-center border shadow-sm ${
+              match.status !== 'Finalizado' && match.scoreHome !== null && match.scoreHome !== undefined
+                ? 'border-[#fed01b] bg-[#fff9e6] text-[#735c00]' 
+                : 'border-[#555b70]/20 bg-[#555b70]/10 text-[#191c1e]'
+            }`}>
+              {match.status !== 'Finalizado' && match.scoreHome !== null && match.scoreHome !== undefined && (
+                <span className="text-[9px] uppercase tracking-wider font-bold mb-0.5 text-[#00873a] animate-pulse">Ao Vivo</span>
+              )}
+              <div className="flex items-center gap-2">
+                <span>{match.scoreHome ?? '-'}</span>
+                <span className={`text-[10px] md:text-xs font-normal ${
+                  match.status !== 'Finalizado' && match.scoreHome !== null && match.scoreHome !== undefined ? 'text-[#6f5900]' : 'text-[#6e7b6c]'
+                }`}>x</span>
+                <span>{match.scoreAway ?? '-'}</span>
+              </div>
             </div>
           ) : (
             <>

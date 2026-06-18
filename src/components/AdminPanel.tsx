@@ -9,6 +9,7 @@ interface AdminPanelProps {
   onAddMatch: (match: Omit<Match, 'id'>) => void;
   onEditMatch: (matchId: string, match: Omit<Match, 'id'>) => void;
   onUpdateMatchStatus: (matchId: string, status: MatchStatus) => void;
+  onUpdateLiveScore: (matchId: string, scoreHome: number, scoreAway: number) => void;
   onLaunchResults: (matchId: string, scoreHome: number, scoreAway: number) => void;
   onDeletePrediction: (predictionId: string) => void;
 }
@@ -19,6 +20,7 @@ export default function AdminPanel({
   onAddMatch,
   onEditMatch,
   onUpdateMatchStatus,
+  onUpdateLiveScore,
   onLaunchResults,
   onDeletePrediction
 }: AdminPanelProps) {
@@ -52,6 +54,12 @@ export default function AdminPanel({
   const [pushTitle, setPushTitle] = useState('');
   const [pushBody, setPushBody] = useState('');
   const [isSendingPush, setIsSendingPush] = useState(false);
+
+  // Live Score State
+  const [showLiveScoreId, setShowLiveScoreId] = useState<string | null>(null);
+  const [liveScoreHome, setLiveScoreHome] = useState<number>(0);
+  const [liveScoreAway, setLiveScoreAway] = useState<number>(0);
+  const [liveNotifyPush, setLiveNotifyPush] = useState<boolean>(true);
 
   const handleFlagUpload = async (event: ChangeEvent<HTMLInputElement>, isHome: boolean) => {
     try {
@@ -169,6 +177,34 @@ export default function AdminPanel({
     setShowLaunchResultsId(null);
     setLaunchScoreHome(0);
     setLaunchScoreAway(0);
+  };
+
+  const handleLiveScoreSubmit = async (match: Match) => {
+    // Save in DB (only score, don't change status)
+    onUpdateLiveScore(match.id, liveScoreHome, liveScoreAway);
+    
+    // Optionally send push
+    if (liveNotifyPush) {
+      try {
+        const title = `⚽ Atualização de Placar!`;
+        const body = `${match.teamHome} ${liveScoreHome} x ${liveScoreAway} ${match.teamAway}`;
+        
+        await supabase.functions.invoke('send-push', {
+          body: { title, body }
+        });
+        alert('Placar atualizado e notificação enviada!');
+      } catch (err) {
+        console.error('Erro push ao vivo:', err);
+        alert('Placar atualizado, mas houve um erro ao enviar a notificação.');
+      }
+    } else {
+      alert('Placar atualizado ao vivo (sem notificação).');
+    }
+    
+    setShowLiveScoreId(null);
+    setLiveScoreHome(0);
+    setLiveScoreAway(0);
+    setLiveNotifyPush(true);
   };
 
   const handleSendPush = async (e: FormEvent) => {
@@ -457,7 +493,70 @@ export default function AdminPanel({
               </div>
 
               {/* Launcher Form if and when active */}
-              {showLaunchResultsId === match.id ? (
+              {showLiveScoreId === match.id ? (
+                <div className="bg-[#fff9e6] p-3 rounded-xl border border-[#fed01b]/50 flex flex-col gap-3 animate-fade-in mt-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-semibold text-[#735c00] font-sans flex items-center gap-1.5">
+                      <RefreshCw className="w-3.5 h-3.5" /> Atualizar Placar ao Vivo
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 flex-1">
+                      <span className="text-xs font-sans font-medium text-[#735c00]">{match.teamHome}:</span>
+                      <input 
+                        type="number" 
+                        min="0"
+                        value={liveScoreHome}
+                        onChange={(e) => setLiveScoreHome(Number(e.target.value))}
+                        className="w-14 h-9 bg-white border border-[#fed01b]/30 rounded-md text-center text-sm font-poppins text-[#191c1e]"
+                        required
+                      />
+                    </div>
+                    <span className="text-[#6f5900] text-xs font-normal">x</span>
+                    <div className="flex items-center gap-2 flex-1">
+                      <span className="text-xs font-sans font-medium text-[#735c00]">{match.teamAway}:</span>
+                      <input 
+                        type="number" 
+                        min="0"
+                        value={liveScoreAway}
+                        onChange={(e) => setLiveScoreAway(Number(e.target.value))}
+                        className="w-14 h-9 bg-white border border-[#fed01b]/30 rounded-md text-center text-sm font-poppins text-[#191c1e]"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <label className="flex items-center gap-2 cursor-pointer mt-1 bg-white p-2 rounded-lg border border-[#fed01b]/20">
+                    <input 
+                      type="checkbox" 
+                      checked={liveNotifyPush}
+                      onChange={(e) => setLiveNotifyPush(e.target.checked)}
+                      className="w-4 h-4 text-[#006b2c] rounded focus:ring-[#006b2c]"
+                    />
+                    <span className="text-[11px] font-sans text-[#3e4a3d] font-medium leading-tight">
+                      Enviar Notificação Push para todos avisando o novo placar
+                    </span>
+                  </label>
+
+                  <div className="flex gap-2 justify-end mt-1">
+                    <button 
+                      type="button"
+                      onClick={() => setShowLiveScoreId(null)}
+                      className="px-3.5 py-1.5 bg-[#eceef0] text-[#3e4a3d] font-sans text-[11px] font-semibold rounded-md cursor-pointer"
+                    >
+                      Cancelar
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => handleLiveScoreSubmit(match)}
+                      className="px-4 py-1.5 bg-[#fed01b] text-[#231b00] font-sans text-[11px] font-bold rounded-md shadow-sm cursor-pointer hover:bg-[#ffe083]"
+                    >
+                      Salvar Placar ao Vivo
+                    </button>
+                  </div>
+                </div>
+              ) : showLaunchResultsId === match.id ? (
                 <div className="bg-[#f2f4f6] p-3 rounded-xl border border-[#eceef0] flex flex-col gap-3 animate-fade-in">
                   <span className="text-xs font-semibold text-[#191c1e] font-sans">Lançar Placar Real</span>
                   <div className="flex items-center gap-3">
@@ -506,25 +605,45 @@ export default function AdminPanel({
                 <div className="flex flex-wrap gap-2 justify-end mt-2">
                   {match.status !== 'Finalizado' && (
                     <button 
-                      onClick={() => handleEditClick(match)}
-                      className="flex-1 bg-[#eceef0] text-[#3e4a3d] hover:bg-[#e0e3e5] font-sans text-xs font-semibold px-3 py-2 rounded-xl hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      onClick={() => {
+                        setShowLiveScoreId(null);
+                        handleEditClick(match);
+                      }}
+                      className="flex-1 bg-[#eceef0] text-[#3e4a3d] hover:bg-[#e0e3e5] font-sans text-[11px] font-semibold px-2 py-2 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                     >
-                      <Edit className="w-4 h-4" />
+                      <Edit className="w-3.5 h-3.5" />
                       Editar Jogo
+                    </button>
+                  )}
+
+                  {match.status !== 'Finalizado' && (
+                    <button 
+                      onClick={() => {
+                        setShowLaunchResultsId(null);
+                        setShowLiveScoreId(match.id);
+                        setLiveScoreHome(match.scoreHome || 0);
+                        setLiveScoreAway(match.scoreAway || 0);
+                        setLiveNotifyPush(true);
+                      }}
+                      className="flex-1 bg-[#fed01b] text-[#735c00] hover:bg-[#ffe083] font-sans text-[11px] font-bold px-2 py-2 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      Ao Vivo
                     </button>
                   )}
 
                   {match.status !== 'Finalizado' ? (
                     <button 
                       onClick={() => {
+                        setShowLiveScoreId(null);
                         setShowLaunchResultsId(match.id);
                         setLaunchScoreHome(match.scoreHome || 0);
                         setLaunchScoreAway(match.scoreAway || 0);
                       }}
-                      className="flex-1 bg-[#006b2c] text-white font-sans text-xs font-semibold px-3 py-2 rounded-xl hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                      className="flex-1 bg-[#006b2c] text-white font-sans text-[11px] font-semibold px-2 py-2 rounded-xl hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                     >
-                      <CheckSquare className="w-4 h-4" />
-                      Lançar Resultado
+                      <CheckSquare className="w-3.5 h-3.5" />
+                      Encerrar Placar
                     </button>
                   ) : (
                     <button 
