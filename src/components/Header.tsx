@@ -58,7 +58,7 @@ export default function Header({ currentScreen, onNavigate, onBack, userAvatar, 
               className="h-10 md:h-12 w-auto object-contain"
               referrerPolicy="no-referrer"
             />
-            <span className="font-poppins font-bold text-[#191c1e] text-lg md:text-xl tracking-tight">
+            <span className="hidden md:block font-poppins font-bold text-[#191c1e] text-lg md:text-xl tracking-tight">
               Selman'sBet
             </span>
           </div>
@@ -73,7 +73,7 @@ export default function Header({ currentScreen, onNavigate, onBack, userAvatar, 
         {/* Mobile Centered Title */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:hidden pointer-events-none w-max z-0">
           <h1 className="font-poppins font-bold text-[17px] text-[#191c1e] tracking-tight">
-            Bolão da Resenha
+            Selman's Bet
           </h1>
         </div>
 
