@@ -15,7 +15,6 @@ export default function BottomNavBar({ currentScreen, onNavigate, isAdmin }: Bot
 
   const navItems = [
     { id: 'home', icon: Home, label: 'Início', isActive: isInicioActive },
-    { id: 'chat', icon: MessageCircle, label: 'Resenha', isActive: isChatActive },
     { id: 'ranking', icon: Trophy, label: 'Ranking', isActive: isRankingActive },
   ];
   

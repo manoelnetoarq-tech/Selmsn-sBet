@@ -23,8 +23,7 @@ export default function Header({ currentScreen, onNavigate, onBack, userAvatar, 
         return 'Alterar Senha';
       case 'admin':
         return 'Área do Admin';
-      case 'chat':
-        return 'Bate-Papo da Resenha';
+
       case 'ranking':
         return 'Ranking da Resenha';
       case 'profile':
@@ -99,16 +98,7 @@ export default function Header({ currentScreen, onNavigate, onBack, userAvatar, 
           >
             Ranking
           </button>
-          <button
-            onClick={() => onNavigate('chat')}
-            className={`font-sans text-sm font-semibold px-1 py-1 transition-all hover:text-[#006b2c] cursor-pointer ${
-              currentScreen === 'chat'
-                ? 'text-[#006b2c] border-b-2 border-[#006b2c]'
-                : 'text-[#3e4a3d]'
-            }`}
-          >
-            Resenha
-          </button>
+
           {isAdmin && (
             <button
               onClick={() => onNavigate('admin')}
