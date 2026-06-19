@@ -1,0 +1,115 @@
+# Diretrizes Operacionais do Projeto Selman'sBet
+
+## Objetivo
+
+Definir as informações oficiais do projeto **Selman'sBet** para garantir que qualquer manutenção, alteração, versionamento ou deploy seja executado no ambiente correto.
+
+Estas diretrizes devem ser consultadas sempre antes de qualquer ação relacionada ao projeto, principalmente antes de executar comandos de build, commit, push ou deploy.
+
+---
+
+## Informações Oficiais do Projeto
+
+### Nome do Projeto
+
+**Selman'sBet**
+
+### Pasta Raiz Local
+
+```txt
+C:\STUDIO LOGIN\PRODUTOS\Selmans Bet\selmansbet
+```
+
+Esta é a pasta raiz oficial do projeto no ambiente local.
+
+Sempre que for trabalhar no projeto, confirme que o terminal ou editor está aberto exatamente nesta pasta antes de executar qualquer comando.
+
+---
+
+## Repositório Oficial no GitHub
+
+```txt
+https://github.com/manoelnetoarq-tech/Selmsn-sBet.git
+```
+
+Este é o repositório oficial que deve ser utilizado para versionamento do projeto.
+
+Antes de executar comandos como `git status`, `git add`, `git commit`, `git push` ou qualquer integração com o repositório remoto, valide se o projeto está apontando para este repositório.
+
+---
+
+## Link Oficial do Projeto na Vercel
+
+```txt
+https://selmsns-bet.vercel.app/
+```
+
+Este é o link oficial de produção do projeto publicado na Vercel.
+
+Sempre que for validar uma publicação, testar uma entrega ou conferir o resultado final do deploy, utilize este endereço como referência.
+
+---
+
+## Regras Obrigatórias Antes do Deploy
+
+Antes de realizar qualquer deploy, siga obrigatoriamente esta verificação:
+
+1. Confirmar se a pasta raiz local é:
+
+```txt
+C:\STUDIO LOGIN\PRODUTOS\Selmans Bet\selmansbet
+```
+
+2. Confirmar se o repositório remoto do GitHub é:
+
+```txt
+https://github.com/manoelnetoarq-tech/Selmsn-sBet.git
+```
+
+3. Confirmar se o projeto publicado na Vercel corresponde ao link:
+
+```txt
+https://selmsns-bet.vercel.app/
+```
+
+4. Não executar deploy a partir de outra pasta local.
+
+5. Não enviar alterações para outro repositório GitHub.
+
+6. Não vincular ou publicar o projeto em outro projeto da Vercel sem autorização.
+
+---
+
+## Checklist de Segurança
+
+Antes de qualquer publicação, validar:
+
+* Estou dentro da pasta correta do projeto?
+* O Git remoto está apontando para o repositório oficial?
+* As alterações pertencem realmente ao projeto Selman'sBet?
+* O build foi testado corretamente?
+* O deploy será enviado para o projeto correto na Vercel?
+* O link final de produção é o mesmo informado neste documento?
+
+---
+
+## Comportamento Esperado do Agente ou Desenvolvedor
+
+Sempre que uma tarefa envolver edição, manutenção ou deploy do projeto **Selman'sBet**, o agente ou desenvolvedor deve consultar estas informações antes de agir.
+
+Caso exista divergência entre a pasta local, o repositório GitHub ou o projeto da Vercel, a ação deve ser interrompida imediatamente.
+
+Nenhum deploy deve ser realizado enquanto houver dúvida sobre o ambiente correto.
+
+---
+
+## Resumo Rápido
+
+```txt
+Projeto: Selman'sBet
+Pasta raiz: C:\STUDIO LOGIN\PRODUTOS\Selmans Bet\selmansbet
+GitHub: https://github.com/manoelnetoarq-tech/Selmsn-sBet.git
+Vercel: https://selmsns-bet.vercel.app/
+```
+
+Use estas informações como fonte oficial para evitar deploys em pastas, repositórios ou projetos incorretos.
