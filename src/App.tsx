@@ -325,11 +325,6 @@ export default function App() {
     }
   };
 
-  const handleUpdateLiveScore = async (matchId: string, scoreHome: number, scoreAway: number) => {
-    await supabase.from('matches').update({ score_home: scoreHome, score_away: scoreAway }).eq('id', matchId);
-    loadData();
-  };
-
   const handleLaunchResults = async (matchId: string, scoreHome: number, scoreAway: number) => {
     await supabase.from('matches').update({ status: 'Finalizado', score_home: scoreHome, score_away: scoreAway }).eq('id', matchId);
     loadData();
@@ -508,7 +503,6 @@ export default function App() {
             onUpdateMatchStatus={handleUpdateMatchStatus}
             onUpdateLiveScore={handleUpdateLiveScore}
             onLaunchResults={handleLaunchResults}
-            onUpdateLiveScore={handleUpdateLiveScore}
             onDeletePrediction={handleDeletePrediction}
           />
         );

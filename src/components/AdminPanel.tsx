@@ -12,7 +12,6 @@ interface AdminPanelProps {
   onUpdateMatchStatus: (matchId: string, status: MatchStatus) => void;
   onUpdateLiveScore: (matchId: string, scoreHome: number, scoreAway: number) => void;
   onLaunchResults: (matchId: string, scoreHome: number, scoreAway: number) => void;
-  onUpdateLiveScore: (matchId: string, scoreHome: number, scoreAway: number) => void;
   onDeletePrediction: (predictionId: string) => void;
 }
 
@@ -24,12 +23,10 @@ export default function AdminPanel({
   onUpdateMatchStatus,
   onUpdateLiveScore,
   onLaunchResults,
-  onUpdateLiveScore,
   onDeletePrediction
 }: AdminPanelProps) {
   const [showAddMatchForm, setShowAddMatchForm] = useState(false);
   const [showLaunchResultsId, setShowLaunchResultsId] = useState<string | null>(null);
-  const [showLiveScoreId, setShowLiveScoreId] = useState<string | null>(null);
   const [editingMatchId, setEditingMatchId] = useState<string | null>(null);
 
   // New Match Inputs State
@@ -296,7 +293,6 @@ export default function AdminPanel({
             Disparar Notificação Local de Teste
           </button>
         </div>
-      </section>
       </section>
 
       {/* Primary Action Panel */}
@@ -702,7 +698,6 @@ export default function AdminPanel({
                       onClick={() => {
                         setShowLiveScoreId(null);
                         setShowLaunchResultsId(match.id);
-                        setShowLiveScoreId(null);
                         setLaunchScoreHome(match.scoreHome || 0);
                         setLaunchScoreAway(match.scoreAway || 0);
                       }}
