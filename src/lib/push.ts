@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 
-const PUBLIC_VAPID_KEY = 'BCRgAb2d0GyilExII2KiYwNsGoniD5a4XL9Tyq4f5ry71UD7e5oOhHW5sBPYFPTirLsgwkjFh3dyvevvzkrJdng';
+const PUBLIC_VAPID_KEY = 'BBoIHHoP8yHPq8RTk3BbLzzgJe7kiOWOsVyDFMnFgDSHmMqLxJDeJ9uhDc_xjf-qjPABv5iIGH_rrkLQpGt6rMI';
 
 // Convert base64 VAPID key to Uint8Array needed for Web Push
 function urlBase64ToUint8Array(base64String: string) {
