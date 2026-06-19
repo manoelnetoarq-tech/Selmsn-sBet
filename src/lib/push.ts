@@ -71,11 +71,14 @@ export async function subscribeToPushNotifications() {
     const userId = session?.session?.user?.id;
 
     if (userId) {
+      const subJson = subscription.toJSON();
       // Salva a subscription no Supabase
       await supabase.from('push_subscriptions').upsert({
         user_id: userId,
-        subscription: subscription.toJSON()
-      }, { onConflict: 'user_id' });
+        endpoint: subJson.endpoint,
+        p256dh: subJson.keys?.p256dh,
+        auth: subJson.keys?.auth
+      }, { onConflict: 'user_id, endpoint' });
     }
 
     return true;
