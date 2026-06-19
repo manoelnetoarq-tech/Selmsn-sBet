@@ -268,25 +268,6 @@ export default function ProfileEdit({
           <section className="flex flex-col gap-2 pt-2">
             <h3 className="font-poppins font-bold text-sm text-[#191c1e] px-1 mb-1">Ações de Conta</h3>
 
-            <div className="w-full bg-white border border-[#eceef0] p-3.5 rounded-2xl flex items-center justify-between shadow-sm transition-colors mb-1">
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${pushEnabled ? 'bg-[#006b2c]/15 text-[#006b2c]' : 'bg-[#8e9894]/10 text-[#8e9894]'}`}>
-                  {pushEnabled ? <BellRing className="w-5 h-5" /> : <Bell className="w-5 h-5" />}
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-sans text-sm font-semibold text-[#191c1e]">Receber Notificações</span>
-                  <span className="text-[10px] text-[#6e7b6c]">Alertas de início e resultados</span>
-                </div>
-              </div>
-              
-              <button 
-                onClick={handleTogglePush}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${pushEnabled ? 'bg-[#006b2c]' : 'bg-[#bdcaba]'}`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${pushEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
-              </button>
-            </div>
-            
             {/* Notifications Toggle */}
             <button 
               type="button"
@@ -294,16 +275,16 @@ export default function ProfileEdit({
               className="w-full bg-white border border-[#eceef0] p-3.5 rounded-2xl flex items-center justify-between shadow-sm hover:bg-[#eceef0]/30 transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isPushEnabled ? 'bg-[#006b2c]/10 text-[#006b2c]' : 'bg-[#555b70]/10 text-[#555b70]'}`}>
-                  {isPushEnabled ? <Bell className="w-5 h-5" /> : <BellOff className="w-5 h-5" />}
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${pushEnabled ? 'bg-[#006b2c]/10 text-[#006b2c]' : 'bg-[#555b70]/10 text-[#555b70]'}`}>
+                  {pushEnabled ? <Bell className="w-5 h-5" /> : <BellOff className="w-5 h-5" />}
                 </div>
                 <div className="flex flex-col items-start">
                   <span className="font-sans text-sm font-semibold text-[#191c1e]">Notificações do App</span>
-                  <span className="font-sans text-[10px] text-[#6e7b6c]">{isPushEnabled ? 'Ativadas (Gols e Placar)' : 'Desativadas'}</span>
+                  <span className="font-sans text-[10px] text-[#6e7b6c]">{pushEnabled ? 'Ativadas (Gols e Placar)' : 'Desativadas'}</span>
                 </div>
               </div>
-              <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isPushEnabled ? 'bg-[#006b2c]' : 'bg-[#eceef0]'}`}>
-                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${isPushEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
+              <div className={`w-10 h-6 rounded-full p-1 transition-colors ${pushEnabled ? 'bg-[#006b2c]' : 'bg-[#eceef0]'}`}>
+                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${pushEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
               </div>
             </button>
             
